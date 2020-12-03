@@ -5,11 +5,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
 
-
-
-router.get('/', (req,res) => {
-    res.send("hello");
-});
+// bcrypt
+const bcrypt = require('bcryptjs');
 
 router.post('/signup', (req,res) => {
     const {name,email,password} = req.body;
@@ -17,26 +14,27 @@ router.post('/signup', (req,res) => {
     if(!email || !password || !name) {
         return res.status(422).json({error: "please add all the fields"});
     }
-    User.findOne({email:email}) // email 항목에 동일한 "email"이 있는지 찾아줌
+    User.findOne({email:req.body.email}) // email 항목에 동일한 "email"이 있는지 찾아줌
     .then((savedUser) => {
         if(savedUser) {
             return res.status(422).json({error: "user already exists with that email"});
         }
-        else {
+        bcrypt.hash(password,12)
+        .then(hashedpassword => {
             const user = new User({
                 name,
                 email,
-                password
+                password: hashedpassword
             });
 
-            user.save()
+            user.save() // 저장
             .then((user) => {
                 res.json({message: `saved successfully ${user}`})
             })
             .catch(err => {
                 console.log(err);
             })
-        }
+        })
     })
     .catch((err) => console.log(err));
 })
