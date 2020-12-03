@@ -8,6 +8,10 @@ const User = mongoose.model("User");
 // bcrypt
 const bcrypt = require('bcryptjs');
 
+// jwt
+const jwt = require('jsonwebtoken');
+const {JWT_SECRET} = require('../config/keys');
+
 router.post('/signup', (req,res) => {
     const {name,email,password} = req.body;
     console.log(email);
@@ -53,7 +57,10 @@ router.post('/signin', (req,res) => {
         bcrypt.compare(password,savedUser.password)
         .then(isMatch => {
             if(isMatch) {
-                return res.json({message: "Login successfully"})
+                // return res.json({message: "Login successfully"})
+                // jwt토큰 발급 후 제한시간 10분으로 지정
+                const token = jwt.sign({_id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
+                res.json({token:token})
             }
             else {
                 return res.status(422).json({error: "Invalid Email or password"})
