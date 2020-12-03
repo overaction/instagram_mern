@@ -7,15 +7,6 @@ const PORT = 5000;
 const mongoose = require('mongoose');
 const mongokeys = require('./config/keys');
 
-// use usermodel schema
-require('./config/usermodel');
-
-// use json -> router 이전에 선언해줘야만 한다
-app.use(express.json());
-
-// use express router
-app.use(require('./routes/auth'))
-
 // connect mongodb
 mongoose.connect(mongokeys.MONGOURI, {
     useNewUrlParser: true,
@@ -26,6 +17,17 @@ mongoose.connection.on('connected', () => {
 })
 mongoose.connection.on('error', (err) => {
     console.log('error connecting', err);
-})
+});
+
+// model schema
+require('./config/usermodel');
+require('./config/postmodel');
+
+// use json -> router 이전에 선언해줘야만 한다
+app.use(express.json());
+
+// use express router
+app.use(require('./routes/auth'));
+app.use(require('./routes/post'))
 
 app.listen(PORT || 5000 , () => console.log(`server is running on ${PORT}`));

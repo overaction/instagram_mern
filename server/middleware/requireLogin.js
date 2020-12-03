@@ -18,9 +18,11 @@ module.exports = (req, res, next) => {
         const {_id} = payload;
         User.findById(_id)
         .then(userData => {
-
-            req.user = userData;
+            req.userinfo = userData;
+            next();
         })
-        next();
+        // next();
+        // 만약 이곳에 next()를 선언한다면 userData가 전해지는데 시간이 걸리기 때문에 미리 next()가 실행되고,
+        // req.userinfo는 undefined인 상태로 전해지게 될 것이다
     })
 }

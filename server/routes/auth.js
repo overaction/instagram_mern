@@ -38,7 +38,7 @@ router.post('/signup', (req,res) => {
                 password: hashedpassword
             });
 
-            user.save() // 저장
+            user.save() // mongodb에 저장
             .then((user) => {
                 res.json({message: `saved successfully ${user}`})
             })
@@ -58,6 +58,7 @@ router.post('/signin', (req,res) => {
     }
     User.findOne({email: email})
     .then(savedUser => {
+        console.log(savedUser);
         if(!savedUser) {
             return res.status(422).json({error: "Invalid Email or password"})
         }
@@ -66,7 +67,7 @@ router.post('/signin', (req,res) => {
             if(isMatch) {
                 // return res.json({message: "Login successfully"})
                 // jwt토큰 발급 후 제한시간 10분으로 지정
-                const token = jwt.sign({_id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
+                const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
                 res.json({token:token})
             }
             else {
