@@ -9,7 +9,7 @@ const Home = () => {
                     <img src="https://photographycourse.net/wp-content/uploads/2014/11/Landscape-Photography-steps.jpg" />
                 </div>
                 <div className="card-content">
-                <i class="material-icons">favorite</i>
+                <i className="material-icons">favorite</i>
                     <h6>title</h6>
                     <p>amazing~</p>
                     <input type="text" placeholder="add a comment"/>
@@ -21,7 +21,7 @@ const Home = () => {
                     <img src="https://photographycourse.net/wp-content/uploads/2014/11/Landscape-Photography-steps.jpg" />
                 </div>
                 <div className="card-content">
-                <i class="material-icons">favorite</i>
+                <i className="material-icons">favorite</i>
                     <h6>title</h6>
                     <p>amazing~</p>
                     <input type="text" placeholder="add a comment"/>
@@ -33,7 +33,7 @@ const Home = () => {
                     <img src="https://photographycourse.net/wp-content/uploads/2014/11/Landscape-Photography-steps.jpg" />
                 </div>
                 <div className="card-content">
-                <i class="material-icons">favorite</i>
+                <i className="material-icons">favorite</i>
                     <h6>title</h6>
                     <p>amazing~</p>
                     <input type="text" placeholder="add a comment"/>
