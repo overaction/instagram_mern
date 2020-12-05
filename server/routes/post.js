@@ -19,8 +19,8 @@ router.get('/allposts', (req,res) => {
 })
 
 router.post('/createpost',requireLogin,(req,res) => {
-    const {title,body} = req.body;
-    if(!title || !body) {
+    const {title,body,pic} = req.body;
+    if(!title || !body || !pic) {
         return res.status(422).json({error: "Please add all the fields"});
     }
     // password는 저장하지 않는다
@@ -28,6 +28,7 @@ router.post('/createpost',requireLogin,(req,res) => {
     const post = new Post({
         title,
         body,
+        pic,
         postedBy: req.userinfo
     })
     post.save() // mongodb에 저장
