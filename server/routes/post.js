@@ -20,6 +20,7 @@ router.get('/allposts', (req,res) => {
 
 router.post('/createpost',requireLogin,(req,res) => {
     const {title,body,pic} = req.body;
+    console.log(req.body)
     if(!title || !body || !pic) {
         return res.status(422).json({error: "Please add all the fields"});
     }
@@ -28,7 +29,7 @@ router.post('/createpost',requireLogin,(req,res) => {
     const post = new Post({
         title,
         body,
-        pic,
+        photo:pic,
         postedBy: req.userinfo
     })
     post.save() // mongodb에 저장
