@@ -40,7 +40,9 @@ const SignIn = () => {
                 history.push('/');
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log(err)
+        });
     }
     return (
         <div className="mycard">
