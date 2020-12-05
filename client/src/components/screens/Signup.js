@@ -31,6 +31,7 @@ const SignUp = () => {
                 history.push('/signin');
             }
         })
+        .catch(err => console.log(err));
     }
 
     return (
