@@ -19,3 +19,11 @@ h2{
     border-bottom: 1px solid rgb(10, 87, 230) !important;
     box-shadow: 0 1px 0 0  rgb(10, 87, 230) !important;
 }
+
+
+
+#toast-container {
+    top: 300px;
+    right: 300px !important;
+    width: 250px;
+}
