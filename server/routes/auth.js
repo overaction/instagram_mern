@@ -67,7 +67,9 @@ router.post('/signin', (req,res) => {
             if(isMatch) {
                 // return res.json({message: "Login successfully"})
                 // jwt토큰 발급 후 제한시간 10분으로 지정
-                const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
+                const token = jwt.sign({name: savedUser.name, _id: savedUser._id},JWT_SECRET);
+                // 토큰 10분 제한
+                //const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
                 const {_id,name,email} = savedUser;
                 res.json({token:token, svuser: {_id,name,email}})
             }

@@ -24,6 +24,7 @@ const Routing = () => {
     // user의 정보를 저장
     if(user) {
       dispatch({type:"USER", payload:user});
+      history.push('/');
     }
     else {
       history.push('/signin');
