@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
-import {Link} from 'react-router-dom'
+import {Link,useHistory} from 'react-router-dom'
 import { userContext } from '../App';
 
 const Navbar = () => {
+    const history = useHistory();
     const {state, dispatch} = useContext(userContext);
     const renderList = () => {
         // 만약 state (svuser) 가 있다면 profile과 create만 보여지고 아니라면 그 반대이다
@@ -13,6 +14,18 @@ const Navbar = () => {
                 </li>,
                 <li>
                     <Link to="/create">Create Post</Link>
+                </li>,
+                <li>
+                    <button
+                        className="btn waves-effect waves-light #26c6da cyan lighten-1"
+                        onClick={() => {
+                            localStorage.clear();
+                            dispatch({type:"CLEAR"})
+                            history.push('/signin');
+                        }}
+                    >
+                        Logout
+                    </button>
                 </li>,
             ];
         }
