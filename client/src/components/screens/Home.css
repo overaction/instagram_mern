@@ -4,3 +4,8 @@
     max-width: 500px;
     height: max-content;
 }
+
+.card-commentby {
+    font-weight: 600;
+    margin-right: 10px;
+}

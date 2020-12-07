@@ -10,6 +10,7 @@ router.get('/allposts',requireLogin,(req,res) => {
     // find all posts
     Post.find()
     .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
     .then(posts => {
         res.json({posts})
     })
@@ -33,6 +34,8 @@ router.post('/createpost',requireLogin,(req,res) => {
         postedBy: req.userinfo
     })
     post.save() // mongodb에 저장
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
     .then((post) => {
         res.json({post: post})
     })
@@ -44,6 +47,7 @@ router.post('/createpost',requireLogin,(req,res) => {
 router.get('/mypost', requireLogin, (req,res) => {
     Post.find({postedBy: req.userinfo._id})
     .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
     .then(mypost => {
         res.json({mypost})
     })
@@ -59,6 +63,8 @@ router.put('/like', requireLogin, (req,res) => {
     {
         new: true
     })
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
     .exec((err,result) => {
         if(err) {
             return res.status(422).json({error: err})
@@ -75,7 +81,10 @@ router.put('/unlike', requireLogin, (req,res) => {
         $pull:{likes: req.userinfo._id}
     }, {
         new: true
-    }).exec((err,result) => {
+    })
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
+    .exec((err,result) => {
         if(err) {
             console.log(err);
             return res.status(422).json({error: err})
@@ -98,6 +107,7 @@ router.put('/comment', requireLogin, (req,res) => {
     {
         new: true
     })
+    .populate('postedBy','_id name')
     .populate('comments.commentBy','_id name')
     .exec((err,result) => {
         if(err) {
