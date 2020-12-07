@@ -28,6 +28,7 @@ app.use(express.json());
 
 // use express router
 app.use(require('./routes/auth'));
-app.use(require('./routes/post'))
+app.use(require('./routes/post'));
+app.use(require('./routes/user'));
 
 app.listen(PORT || 5000 , () => console.log(`server is running on ${PORT}`));

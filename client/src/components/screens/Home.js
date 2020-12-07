@@ -15,6 +15,7 @@ const Home = () => {
             },
         }).then(res => res.json())
         .then(result => {
+            console.log(`allposts`)
             console.log(result);
             if(result.error) {
                 history.push('/signin')
@@ -37,7 +38,6 @@ const Home = () => {
             })
         }).then(res => res.json())
         .then(result => {
-            console.log(posts)
             const newData = posts.map(item => {
                 // 만약 기존 posts의 id === 좋아요 누른 post의 id 이라면
                 // 좋아요 누른 post로 교체
@@ -64,6 +64,7 @@ const Home = () => {
             })
         }).then(res => res.json())
         .then(result => {
+            console.log('dislike')
             console.log(result)
             const newData = posts.map(item => {
                 if(item._id === result._id) {
@@ -102,13 +103,59 @@ const Home = () => {
         }).catch(err => console.log(err));
     }
 
+    const deletePost = (postId) => {
+        fetch(`/deletepost/${postId}`, {
+            method: 'delete',
+            headers: {
+                'Authorization': 'Bearer '+localStorage.getItem('jwt')
+            },
+        })
+        .then(res => res.json())
+        .then(result => {
+            console.log('deleted')
+            console.log(result);
+            // 삭제한 post의 id를 통해 해당 post는 filter 함
+            const newData = posts.filter(item => {
+                return item._id !== result._id
+            })
+            setPosts(newData);
+        })
+    }
+
+    const deleteComment = (postId,commentId) => {
+        fetch(`/deletecomment/${postId}/${commentId}`, {
+            method: 'delete',
+            headers: {
+                'Authorization': 'Bearer '+localStorage.getItem('jwt')
+            },
+        })
+        .then(res => res.json())
+        .then(result => {
+            console.log(`delete comment`);
+            console.log(result);
+            const newData = posts.map(item => {
+                if(item._id === result._id)
+                    return result;
+                else
+                    return item;
+            })
+            setPosts(newData);
+        }).catch(err => console.log(err));
+    }
+
     return (
         <div className="home">
             {posts.map((item) => {
-                console.log(item)
                 return (
-                    <div className="card home-card" key={item._id}>
-                    <h5>{item.postedBy.name}</h5>
+                <div className="card home-card" key={item._id}>
+                    <div className="card-tool">
+                        <h5 style={{marginLeft:"8px"}}>{item.postedBy.name}</h5>
+                        {item.postedBy._id === state._id 
+                        ? 
+                        <i className="material-icons" style={{float:'right'}} onClick={() => deletePost(item._id)}>delete</i> 
+                        : 
+                        ''}
+                    </div>
                     <div className="card-image">
                         <img src={item.photo} />
                     </div>
@@ -122,9 +169,18 @@ const Home = () => {
                         <h6>{item.title}</h6>
                         <p>{item.body}</p>
                         {
-                            item.comments.map(item => {
+                            item.comments.map(comment => {
                                 return (
-                                    <h6 key={item._id}><span className="card-commentby">{item.commentBy.name}</span>{item.text}</h6>
+                                    <h6 key={comment._id}>
+                                        <span className="card-commentby">{comment.commentBy.name}</span>
+                                        {comment.text}
+                                        {comment.commentBy._id === state._id
+                                        ?
+                                        <i className="material-icons" style={{float:'right'}} onClick={() => deleteComment(item._id,comment._id)}>delete</i>
+                                        :
+                                        ''
+                                        }
+                                    </h6>
                                 )
                             })
                         }

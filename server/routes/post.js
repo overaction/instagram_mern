@@ -34,8 +34,6 @@ router.post('/createpost',requireLogin,(req,res) => {
         postedBy: req.userinfo
     })
     post.save() // mongodb에 저장
-    .populate('postedBy','_id name')
-    .populate('comments.commentBy','_id name')
     .then((post) => {
         res.json({post: post})
     })
@@ -114,6 +112,47 @@ router.put('/comment', requireLogin, (req,res) => {
             return res.status(422).json({error: err})
         }
         else {
+            return res.json(result);
+        }
+    })
+})
+
+router.delete('/deletepost/:postId',requireLogin,(req,res) => {
+    Post.findOne({_id: req.params.postId})
+    .populate('postedBy','_id')
+    .exec((err,result) => {
+        if(err || !result) return res.status(422).json({error:err})
+        // object끼리 비교하면 안되므로 string으로 바꿔줌
+        if(JSON.stringify(result.postedBy._id) === JSON.stringify(req.userinfo._id)) {
+            console.log(result);
+            result.remove()
+            .then(result => {
+                console.log(result);
+                return res.json(result);
+            })
+            .catch(err => console.log(`err`+err))
+        }
+    })
+})
+
+router.delete('/deletecomment/:postId/:commentId',requireLogin,(req,res) => {
+    const comment = {
+        _id: req.params.commentId
+    };
+    Post.findByIdAndUpdate(req.params.postId, {
+        $pull: {comments: comment}
+    }, {
+        new: true
+    })
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy', '_id name')
+    .exec((err,result) => {
+        if(err || !result) {
+            console.log(err);
+            return res.status(422).json({error: err})
+        }
+        else {
+            console.log(result);
             return res.json(result);
         }
     })

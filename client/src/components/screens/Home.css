@@ -5,6 +5,12 @@
     height: max-content;
 }
 
+.card-tool {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .card-commentby {
     font-weight: 600;
     margin-right: 10px;
