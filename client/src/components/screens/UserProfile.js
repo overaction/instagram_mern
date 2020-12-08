@@ -5,6 +5,7 @@ import {useParams} from 'react-router-dom';
 import Loading from '../../Loading';
 const Profile = () => {
     const [userProfile, setProfile] = useState(null);
+    const [showFollow, setShowFollow] = useState(true);
     const {state,dispatch} = useContext(userContext);
     const {userId} = useParams();
     useEffect(() => {
@@ -44,10 +45,47 @@ const Profile = () => {
             setProfile((prev) => {
                 return {
                     ...prev,
-                    user: result.otheruser
+                    user: {
+                        ...prev.user,
+                        followers: [...prev.user.followers, result.otheruser._id]
+                    }
                 }
             })
         })
+        setShowFollow(false);
+    }
+
+    const unfollowUser = () => {
+        fetch('/unfollow', {
+            method: 'put',
+            headers: {
+                "Content-type": 'application/json',
+                'Authorization': 'Bearer '+localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                unfollowId: userId,
+            })
+        })
+        .then(res => res.json())
+        .then(result => {
+            console.log(result);
+            dispatch({type:"UPDATE",payload: {
+                followings: result.result2.followings,
+                followers: result.result2.followers,
+            }})
+            localStorage.setItem('svuser',JSON.stringify(result.result2));
+            setProfile(prev => {
+                const newfollowers = result.result2.followers.filter(item => item._id !== userId)
+                return {
+                    ...prev,
+                    user: {
+                        ...prev.user,
+                        followers: newfollowers
+                    }
+                }
+            })
+        })
+        setShowFollow(true);
     }
 
     return (
@@ -62,12 +100,22 @@ const Profile = () => {
                         />
                         <div>
                             <h4>{userProfile.user.name}</h4>
+                            {showFollow
+                            ?
                             <button
                                 className="btn waves-effect waves-light #64b5f6 blue darken-1"
                                 onClick={() => followUser()}
                             >
-                                Submit
+                                Follow
                             </button>
+                            :
+                            <button
+                                className="btn waves-effect waves-light #64b5f6 blue darken-1"
+                                onClick={() => unfollowUser()}
+                            >
+                                unFollow
+                            </button>
+                            }
                             <h5>{userProfile.user.email}</h5>
                             <div style={{display:"flex", justifyContent:"space-between", width: "108%"}}>
                                 <h6>{userProfile.posts.length} posts</h6>
