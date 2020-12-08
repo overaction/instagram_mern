@@ -9,6 +9,7 @@ import Signup from './components/screens/Signup';
 import CreatePost from './components/screens/CreatePost';
 
 import {reducer, initialState} from './reducers/userReducer';
+import UserProfile from './components/screens/UserProfile';
 
 export const userContext = createContext();
 
@@ -24,7 +25,6 @@ const Routing = () => {
     // user의 정보를 저장
     if(user) {
       dispatch({type:"USER", payload:user});
-      history.push('/');
     }
     else {
       history.push('/signin');
@@ -41,11 +41,14 @@ const Routing = () => {
           <Route path="/signup">
               <Signup />
           </Route>
-          <Route path="/profile">
+          <Route exact path="/profile">
               <Profile />
           </Route>
           <Route path="/create">
               <CreatePost />
+          </Route>
+          <Route path="/profile/:userId">
+              <UserProfile />
           </Route>
       </Switch>
   );
