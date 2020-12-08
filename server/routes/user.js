@@ -7,6 +7,7 @@ const User = mongoose.model("User");
 
 router.get('/user/:userId',requireLogin,(req,res) => {
     User.findOne({_id: req.params.userId})
+    // password 항목은 제외
     .select('-password')
     .then(user => {
         Post.find({postedBy: req.params.userId})
@@ -21,6 +22,64 @@ router.get('/user/:userId',requireLogin,(req,res) => {
         })
     }).catch(err => {
         return res.status(404).json({error: "User not found"})
+    })
+})
+
+router.put('/follow', requireLogin, (req,res) => {
+    User.findByIdAndUpdate(req.body.followId, {
+        $push: {followers: req.userinfo._id}
+    }, {
+        new: true
+    })
+    .exec((err,otheruser) => {
+        if(err) {
+            console.log(err);
+            return res.status(422).json({error: err})
+        }
+        else {
+            User.findByIdAndUpdate(req.userinfo._id, {
+                $push: {followings: req.body.followId}
+            }, {
+                new: true
+            })
+            .select('-password')
+            .exec((err,myinfo) => {
+                if(err) {
+                    console.log(err);
+                    return res.status(422).json({error: err})
+                }
+                return res.json({otheruser,myinfo})
+            })
+        }
+    })
+})
+
+router.put('/unfollow', requireLogin, (req,res) => {
+    User.findByIdAndUpdate(req.body.unfollowId, {
+        $pull: {followers: req.userinfo._id}
+    }, {
+        new: true
+    })
+    .exec((err,result) => {
+        if(err) {
+            console.log(err);
+            return res.status(422).json({error: err})
+        }
+        else {
+            User.findByIdAndUpdate(req.userinfo._id, {
+                $pull: {followings: req.body.unfollowId}
+            }, {
+                new: true
+            })
+            .select('-password')
+            .exec((err,result2) => {
+                if(err) {
+                    console.log(err);
+                    return res.status(422).json({error: err})
+                }
+                return res.json({result,result2})
+            })
+        }
     })
 })
 

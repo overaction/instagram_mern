@@ -89,7 +89,8 @@ const Home = () => {
                 text: text,
                 postId: postId,                
             })
-        }).then(res => res.json())
+        })
+        .then(res => res.json())
         .then(result => {
             const newData = posts.map((item) => {
                 if(item._id === result._id) {
