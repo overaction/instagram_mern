@@ -11,6 +11,10 @@
     justify-content: space-between;
 }
 
+.card-name {
+    padding: 5px;
+} 
+
 .card-commentby {
     font-weight: 600;
     margin-right: 10px;

@@ -6,3 +6,7 @@ a {
 .brand-logo{
   font-family: 'Grand Hotel';
 }
+
+.material-icons:hover {
+  cursor: pointer;
+}
