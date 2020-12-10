@@ -70,8 +70,8 @@ router.post('/signin', (req,res) => {
                 const token = jwt.sign({name: savedUser.name, _id: savedUser._id},JWT_SECRET);
                 // 토큰 10분 제한
                 //const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
-                const {_id,name,email} = savedUser;
-                res.json({token:token, svuser: {_id,name,email}})
+                const {_id,name,email,followers,followings} = savedUser;
+                res.json({token:token, svuser: {_id,name,email,followers,followings}})
             }
             else {
                 return res.status(422).json({error: "Invalid Email or password"})

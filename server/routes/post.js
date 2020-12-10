@@ -19,6 +19,19 @@ router.get('/allposts',requireLogin,(req,res) => {
     })
 })
 
+router.get('/allfollowposts',requireLogin,(req,res) => {
+    // followings 배열 안에 있는 값들에 대해 조회
+    Post.find({postedBy: {$in: req.userinfo.followings}})
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
+    .then(posts => {
+        res.json({posts})
+    })
+    .catch(err => {
+        console.log(err);
+    })
+})
+
 router.post('/createpost',requireLogin,(req,res) => {
     const {title,body,pic} = req.body;
     console.log(req.body)
