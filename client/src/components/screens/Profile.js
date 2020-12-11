@@ -5,7 +5,6 @@ const Profile = () => {
     const [myposts, setMyposts] = useState([]);
     const {state,dispatch} = useContext(userContext);
     const [image, setImage] = useState('');
-    const [url, setUrl] = useState('');
     const fileInput = useRef();
     useEffect(() => {
         fetch('/mypost', {
@@ -32,13 +31,22 @@ const Profile = () => {
             })
             .then(res => res.json())
             .then(data => {
-                // url이 업데이트 되었을 때 usEffect를 통해 posting 해준다
-                console.log(data.url);
                 localStorage.setItem('svuser',JSON.stringify({...state, pic :data.url}));
                 dispatch({type:"UPDATE_PROFILE",payload: {
                     pic: data.url
                 }})
-                setUrl(data.url);
+                fetch('/updatepic', {
+                    method: 'put',
+                    headers: {
+                        'Authorization': 'Bearer '+localStorage.getItem('jwt'),
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pic: data.url
+                    })
+                })
+                .then(res => res.json())
+                .then(result => console.log(result))
             })
             .catch(err => console.log(err))
         }
