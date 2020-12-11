@@ -20,7 +20,7 @@ router.get('/protected', requireLogin, (req,res) => {
 })
 
 router.post('/signup', (req,res) => {
-    const {name,email,password} = req.body;
+    const {name,email,password,pic} = req.body;
     console.log(req.body)
     if(!email || !password || !name) {
         return res.status(422).json({error: "please add all the fields"});
@@ -35,7 +35,8 @@ router.post('/signup', (req,res) => {
             const user = new User({
                 name,
                 email,
-                password: hashedpassword
+                password: hashedpassword,
+                pic
             });
 
             user.save() // mongodb에 저장
@@ -70,8 +71,8 @@ router.post('/signin', (req,res) => {
                 const token = jwt.sign({name: savedUser.name, _id: savedUser._id},JWT_SECRET);
                 // 토큰 10분 제한
                 //const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);
-                const {_id,name,email,followers,followings} = savedUser;
-                res.json({token:token, svuser: {_id,name,email,followers,followings}})
+                const {_id,name,email,followers,followings,pic} = savedUser;
+                res.json({token:token, svuser: {_id,name,email,followers,followings,pic}})
             }
             else {
                 return res.status(422).json({error: "Invalid Email or password"})
