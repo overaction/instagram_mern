@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { userContext } from '../../App';
 import './Profile.css'
 const Profile = () => {
     const [myposts, setMyposts] = useState([]);
     const {state,dispatch} = useContext(userContext);
+    const [image, setImage] = useState('');
+    const [url, setUrl] = useState('');
+    const fileInput = useRef();
     useEffect(() => {
         fetch('/mypost', {
             method: 'get',
@@ -16,11 +19,43 @@ const Profile = () => {
             console.log(result);
         })
     },[])
+
+    useEffect(() => {
+        if(image) {
+            const data = new FormData()
+            data.append("file", image);
+            data.append("upload_preset","insta-mern"); // cloudinary upload preset 이름
+            data.append("cloud_name", "kmc"); // cloudinary 내 닉네임
+            fetch("https://api.cloudinary.com/v1_1/kmc/image/upload", {
+                method: "post",
+                body: data,
+            })
+            .then(res => res.json())
+            .then(data => {
+                // url이 업데이트 되었을 때 usEffect를 통해 posting 해준다
+                console.log(data.url);
+                localStorage.setItem('svuser',JSON.stringify({...state, pic :data.url}));
+                dispatch({type:"UPDATE_PROFILE",payload: {
+                    pic: data.url
+                }})
+                setUrl(data.url);
+            })
+            .catch(err => console.log(err))
+        }
+    },[image]);
+
+    const uploadProfileImg = (file) => {
+        setImage(file);
+    }
+
     return (
         <div className="profileContainer">
             <div className="profile-mine">
-                <img className="myimage"
-                    src={state ? state.pic : ''}
+                <input type="file" style={{display: "none"}} onChange={(e) => uploadProfileImg(e.target.files[0])} ref={fileInput}/>
+                <img className="myimage" onClick={() => {
+                    fileInput.current.click()
+                }}
+                    src={state ? state.pic : 'loading'}
                 />
                 <div>
                     <h4>{state ? state.name : "Loading"}</h4>

@@ -5,7 +5,6 @@ import M from 'materialize-css';
 
 import { userContext } from '../../App';
 
-
 const SignIn = () => {
     const {dispatch} = useContext(userContext);
     const history = useHistory();

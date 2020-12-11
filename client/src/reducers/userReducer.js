@@ -12,6 +12,12 @@ export const reducer = (state,action) => {
                 followers: action.payload.followers,
                 followings: action.payload.followings
             }
+        case "UPDATE_PROFILE":
+            return {
+                ...state,
+                pic: action.payload.pic
+            }
+        default:
+            return state;
     }
-    return state;
 }
