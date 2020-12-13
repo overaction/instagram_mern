@@ -1,0 +1,17 @@
+
+.home-disable {
+    opacity: 0.7;
+}
+
+.editPost {
+    position: absolute;
+    margin: 30px auto;
+    max-width: 600px;
+    padding: 20px;
+    text-align: center;
+    display: none;
+}
+
+.editPost-visible {
+    display: block !important;
+}

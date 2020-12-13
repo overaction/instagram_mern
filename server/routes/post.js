@@ -171,5 +171,33 @@ router.delete('/deletecomment/:postId/:commentId',requireLogin,(req,res) => {
     })
 })
 
+router.put('/updatepost/:postId',requireLogin,(req,res) => {
+    const {title,body,pic} = req.body;
+    console.log(req.body)
+    if(!title || !body || !pic) {
+        return res.status(422).json({error: "Please add all the fields"});
+    }
+    Post.findByIdAndUpdate({_id: req.params.postId}, {
+        $set: {
+            title,
+            body,
+            photo: pic
+        }
+    }, {
+        new: true
+    })
+    .populate('postedBy','_id name')
+    .populate('comments.commentBy','_id name')
+    .exec((err,result) => {
+        if(err) {
+            console.log(err);
+            return res.status(422).json({error: err})
+        }
+        else {
+            return res.json(result);
+        }
+    })
+})
+
 
 module.exports = router;

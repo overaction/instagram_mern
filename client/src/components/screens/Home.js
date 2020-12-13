@@ -1,12 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom';
 import { userContext } from '../../App';
-import './Home.css';
+import './EditPost.css';
+import disableScroll from 'disable-scroll';
 const Home = () => {
     const history = useHistory();
     const [posts,setPosts] = useState([]);
     const {state,dispatch} = useContext(userContext);
 
+    const [title, setTitle] = useState('');
+    const [body, setBody] = useState('');
+    const [image, setImage] = useState('');
+    const [url, setUrl] = useState('');
+    const [showEdit, setShowEdit] = useState(false);
+    const [clickedPost, setClickedPost] = useState('');
+    const postRef = useRef();
+    
+
+    // get all posts and update posts
     useEffect(() => {
         fetch('/allposts', {
             method: 'get',
@@ -25,6 +36,36 @@ const Home = () => {
             }
         })
     },[]);
+    // update post
+    useEffect(() => {
+        updatePost(clickedPost);
+    },[url])
+    const updatePost = (postId) => {
+        fetch(`/updatepost/${postId}`, {
+            method: 'put',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer '+localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                title,
+                body,
+                pic:url
+            })
+        })
+        .then(res => res.json())
+        .then(result => {
+            const newData = posts.map((item) => {
+                if(postId === item._id)
+                    return result;
+                else
+                    return item;
+            })
+            setPosts(newData);
+        })
+        disableScroll.off();
+        setShowEdit(false);
+    }
 
     const likePost = (id) => {
         fetch('/like', {
@@ -77,7 +118,6 @@ const Home = () => {
             setPosts(newData);
         }).catch(err => console.log(err));
     }
-
     const makeComment = (text, postId) => {
         fetch('/comment', {
             method: 'put',
@@ -103,7 +143,6 @@ const Home = () => {
             setPosts(newData);
         }).catch(err => console.log(err));
     }
-
     const deletePost = (postId) => {
         fetch(`/deletepost/${postId}`, {
             method: 'delete',
@@ -122,7 +161,6 @@ const Home = () => {
             setPosts(newData);
         })
     }
-
     const deleteComment = (postId,commentId) => {
         fetch(`/deletecomment/${postId}/${commentId}`, {
             method: 'delete',
@@ -144,8 +182,36 @@ const Home = () => {
         }).catch(err => console.log(err));
     }
 
+    const postDetails = async () => {
+        const data = new FormData()
+        data.append("file", image);
+        data.append("upload_preset","insta-mern"); // cloudinary upload preset 이름
+        data.append("cloud_name", "kmc"); // cloudinary 내 닉네임
+        await fetch("https://api.cloudinary.com/v1_1/kmc/image/upload", {
+            method: "post",
+            body: data,
+        })
+        .then(res => res.json())
+        .then(data => {
+            setUrl(data.url);
+        })
+        .catch(err => console.log(err))
+    }
+
+    const setEdit = (postId) => {
+        const height = (window.innerHeight - postRef.current.clientHeight)/2 + window.scrollY - 200;
+        const left = (window.innerWidth - postRef.current.clientWidth)/2 + window.scrollX - 200;
+        console.log(height)
+        postRef.current.style.top = height+"px"
+        postRef.current.style.left = left+"px"
+        disableScroll.on();
+        setShowEdit(true);
+        setClickedPost(postId);
+    }
+
     return (
-        <div className="home">
+        <>
+        <div className={showEdit ? "home-disable" : "home"}>
             {posts.map((item) => {
                 return (
                 <div className="card home-card" key={item._id}>
@@ -159,7 +225,10 @@ const Home = () => {
                         </h5>
                         {item.postedBy._id === state._id 
                         ? 
-                        <i className="material-icons" style={{float:'right'}} onClick={() => deletePost(item._id)}>delete</i> 
+                        <div>
+                            <i className="material-icons" style={{float:'right'}} onClick={() => deletePost(item._id)}>delete</i>
+                            <i className="material-icons" style={{float:'right'}} onClick={() => setEdit(item._id)}>create</i> 
+                        </div> 
                         : 
                         ''}
                     </div>
@@ -203,6 +272,29 @@ const Home = () => {
                 )
             })}
         </div>
+        <div className={showEdit ? "editPost card input-filed editPost-visible" : "editPost card input-filed"} ref={postRef}>
+            <i className="material-icons" style={{float:'right'}} 
+            onClick={() => 
+            {setShowEdit(false)
+            disableScroll.off()}}>
+            clear
+            </i>
+            <input type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
+            <input type="text" placeholder="body" value={body} onChange={(e) => setBody(e.target.value)}/>
+            <div className="file-field input-field">
+                <div className="btn #64b5f6 blue darken-1">
+                    <span>Upload Image</span>
+                    <input type="file" onChange={(e) => setImage(e.target.files[0])}/>
+                </div>
+                <div className="file-path-wrapper">
+                    <input className="file-path validate" type="text" />
+                </div>
+            </div>
+            <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={() => postDetails()}>
+                Submit Post
+            </button>
+        </div>
+    </>
     );
 }
 

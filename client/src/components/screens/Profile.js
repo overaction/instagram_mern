@@ -57,6 +57,7 @@ const Profile = () => {
     }
 
     return (
+    
         <div className="profileContainer">
             <div className="profile-mine">
                 <input type="file" style={{display: "none"}} onChange={(e) => uploadProfileImg(e.target.files[0])} ref={fileInput}/>
