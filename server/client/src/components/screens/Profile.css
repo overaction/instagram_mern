@@ -1,0 +1,33 @@
+.profileContainer {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.profile-mine {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    border-bottom: 1px solid gray;
+}
+
+.myimage {
+    width: 160px;
+    height: 160px;
+    border-radius: 80px;
+    margin-right: 80px;
+}
+
+.myimage:hover {
+    cursor: pointer;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.gallery-item {
+    width: 30%;
+    margin: 0 5px;
+}
