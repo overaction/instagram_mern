@@ -24,6 +24,11 @@ h2{
     box-shadow: 0 1px 0 0  rgb(10, 87, 230) !important;
 }
 
+.signup-toggle {
+    font-size: 14px;
+    margin-top: 50px;
+    color: royalblue !important;
+}
 
 #toast-container {
     top: 300px;

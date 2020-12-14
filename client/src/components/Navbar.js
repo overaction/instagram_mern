@@ -16,7 +16,7 @@ const Navbar = () => {
                     <Link to="/create">Create Post</Link>
                 </li>,
                 <li>
-                    <Link to="/myfollowerspost">My following Posts</Link>
+                    <Link to="/myfollowerspost">My Follwer's Posts</Link>
                 </li>,
                 <li>
                     <button

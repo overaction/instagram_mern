@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { userContext } from '../../App';
 import './EditPost.css';
 import disableScroll from 'disable-scroll';
+import ReactHashtag from 'react-hashtag';
 const Home = () => {
     const history = useHistory();
     const [posts,setPosts] = useState([]);
@@ -211,90 +212,90 @@ const Home = () => {
 
     return (
         <>
-        <div className={showEdit ? "home-disable" : "home"}>
-            {posts.map((item) => {
-                return (
-                <div className="card home-card" key={item._id}>
-                    <div className="card-tool">
-                        <h5 className="card-name">
-                            {item.postedBy._id === state._id ?
-                            <Link to={"/profile/"}>{item.postedBy.name}</Link>
-                            :
-                            <Link to={"/profile/"+item.postedBy._id}>{item.postedBy.name}</Link>
+            <div className={showEdit ? "home-disable" : "home"}>
+                {posts.map((item) => {
+                    return (
+                    <div className="card home-card" key={item._id}>
+                        <div className="card-tool">
+                            <h5 className="card-name">
+                                {item.postedBy._id === state._id ?
+                                <Link to={"/profile/"}>{item.postedBy.name}</Link>
+                                :
+                                <Link to={"/profile/"+item.postedBy._id}>{item.postedBy.name}</Link>
+                                }
+                            </h5>
+                            {item.postedBy._id === state._id 
+                            ? 
+                            <div>
+                                <i className="material-icons" style={{float:'right'}} onClick={() => deletePost(item._id)}>delete</i>
+                                <i className="material-icons" style={{float:'right'}} onClick={() => setEdit(item._id)}>create</i> 
+                            </div> 
+                            : 
+                            ''}
+                        </div>
+                        <div className="card-image">
+                            <img src={item.photo} />
+                        </div>
+                        <div className="card-content">
+                            <i className="material-icons">favorite</i>
+                            {item.likes.includes(state._id)
+                            ? <i className="material-icons" onClick={() => unlikePost(item._id)}>thumb_down</i>
+                            :  <i className="material-icons" onClick={() => likePost(item._id)}>thumb_up</i>
                             }
-                        </h5>
-                        {item.postedBy._id === state._id 
-                        ? 
-                        <div>
-                            <i className="material-icons" style={{float:'right'}} onClick={() => deletePost(item._id)}>delete</i>
-                            <i className="material-icons" style={{float:'right'}} onClick={() => setEdit(item._id)}>create</i> 
-                        </div> 
-                        : 
-                        ''}
+                            <h6>{item.likes.length} likes</h6>
+                            <h6>{item.title}</h6>
+                            <p>{item.body}</p>
+                            {
+                                item.comments.map(comment => {
+                                    return (
+                                        <h6 key={comment._id}>
+                                            <span className="card-commentby">{comment.commentBy.name}</span>
+                                            <ReactHashtag className="hashtag">{comment.text}</ReactHashtag>
+                                            {comment.commentBy._id === state._id
+                                            ?
+                                            <i className="material-icons" style={{float:'right'}} onClick={() => deleteComment(item._id,comment._id)}>delete</i>
+                                            :
+                                            ''
+                                            }
+                                        </h6>
+                                    )
+                                })
+                            }
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                makeComment(e.target.comment.value, item._id)
+                                e.target.comment.value = '';
+                            }}>
+                                <input name="comment" type="text" placeholder="add a comment" />
+                            </form>
+                        </div>
                     </div>
-                    <div className="card-image">
-                        <img src={item.photo} />
-                    </div>
-                    <div className="card-content">
-                        <i className="material-icons">favorite</i>
-                        {item.likes.includes(state._id)
-                        ? <i className="material-icons" onClick={() => unlikePost(item._id)}>thumb_down</i>
-                        :  <i className="material-icons" onClick={() => likePost(item._id)}>thumb_up</i>
-                        }
-                        <h6>{item.likes.length} likes</h6>
-                        <h6>{item.title}</h6>
-                        <p>{item.body}</p>
-                        {
-                            item.comments.map(comment => {
-                                return (
-                                    <h6 key={comment._id}>
-                                        <span className="card-commentby">{comment.commentBy.name}</span>
-                                        {comment.text}
-                                        {comment.commentBy._id === state._id
-                                        ?
-                                        <i className="material-icons" style={{float:'right'}} onClick={() => deleteComment(item._id,comment._id)}>delete</i>
-                                        :
-                                        ''
-                                        }
-                                    </h6>
-                                )
-                            })
-                        }
-                        <form onSubmit={(e) => {
-                            e.preventDefault();
-                            makeComment(e.target.comment.value, item._id)
-                            e.target.comment.value = '';
-                        }}>
-                            <input name="comment" type="text" placeholder="add a comment" />
-                        </form>
-                    </div>
-                </div>
-                )
-            })}
-        </div>
-        <div className={showEdit ? "editPost card input-filed editPost-visible" : "editPost card input-filed"} ref={postRef}>
-            <i className="material-icons" style={{float:'right'}} 
-            onClick={() => 
-            {setShowEdit(false)
-            disableScroll.off()}}>
-            clear
-            </i>
-            <input type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
-            <input type="text" placeholder="body" value={body} onChange={(e) => setBody(e.target.value)}/>
-            <div className="file-field input-field">
-                <div className="btn #64b5f6 blue darken-1">
-                    <span>Upload Image</span>
-                    <input type="file" onChange={(e) => setImage(e.target.files[0])}/>
-                </div>
-                <div className="file-path-wrapper">
-                    <input className="file-path validate" type="text" />
-                </div>
+                    )
+                })}
             </div>
-            <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={() => postDetails()}>
-                Submit Post
-            </button>
-        </div>
-    </>
+            <div className={showEdit ? "editPost card input-filed editPost-visible" : "editPost card input-filed"} ref={postRef}>
+                <i className="material-icons" style={{float:'right'}} 
+                onClick={() => 
+                {setShowEdit(false)
+                disableScroll.off()}}>
+                clear
+                </i>
+                <input type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
+                <input type="text" placeholder="body" value={body} onChange={(e) => setBody(e.target.value)}/>
+                <div className="file-field input-field">
+                    <div className="btn #64b5f6 blue darken-1">
+                        <span>Upload Image</span>
+                        <input type="file" onChange={(e) => setImage(e.target.files[0])}/>
+                    </div>
+                    <div className="file-path-wrapper">
+                        <input className="file-path validate" type="text" />
+                    </div>
+                </div>
+                <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={() => postDetails()}>
+                    Submit Post
+                </button>
+            </div>
+        </>
     );
 }
 

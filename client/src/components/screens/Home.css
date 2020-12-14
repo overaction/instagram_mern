@@ -18,4 +18,10 @@
 .card-commentby {
     font-weight: 600;
     margin-right: 10px;
+    color: black;
+}
+
+span {
+    color: rgb(18, 189, 231);
+    font-weight: 650;
 }

@@ -55,7 +55,7 @@ const SignIn = () => {
                 >
                     Submit
                 </button>
-                <h5>
+                <h5 className="signup-toggle">
                     <Link to="/signup">Don't have an account ?</Link>
                 </h5>
             </div>
