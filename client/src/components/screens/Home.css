@@ -19,9 +19,11 @@
     font-weight: 600;
     margin-right: 10px;
     color: black;
+    cursor: default;
 }
 
 span {
     color: rgb(18, 189, 231);
     font-weight: 650;
+    cursor: pointer;
 }

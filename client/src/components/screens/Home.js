@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { Children, useContext, useEffect, useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom';
 import { userContext } from '../../App';
 import './EditPost.css';
@@ -250,7 +250,10 @@ const Home = () => {
                                     return (
                                         <h6 key={comment._id}>
                                             <span className="card-commentby">{comment.commentBy.name}</span>
-                                            <ReactHashtag className="hashtag">{comment.text}</ReactHashtag>
+                                            <ReactHashtag onHashtagClick={(e) => {
+                                                const length = e.length;
+                                                console.log(e.substring(1,length))
+                                            }}>{comment.text}</ReactHashtag>
                                             {comment.commentBy._id === state._id
                                             ?
                                             <i className="material-icons" style={{float:'right'}} onClick={() => deleteComment(item._id,comment._id)}>delete</i>
