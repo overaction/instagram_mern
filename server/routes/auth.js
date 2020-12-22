@@ -1,6 +1,6 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
-
 // saving or posting on mongodb
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
@@ -12,11 +12,26 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {JWT_SECRET} = require('../config/keys');
 
-// login middleware
-const requireLogin = require('../middleware/requireLogin');
+// GET /auth/google
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/protected', requireLogin, (req,res) => {
-    res.send('hello')
+router.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/signup'}),
+        function(req,res) {
+            res.redirect('http://localhost:3000/redirect')
+        }
+)
+
+router.get('/api/current_user',(req,res) => {
+    if(req.user) {
+        const token = jwt.sign({name: req.user.name, _id: req.user._id},JWT_SECRET);
+        console.log(token);
+        res.json({token, svuser: req.user});
+    }
+})
+
+router.get('/api/logout',(req,res) => {
+    req.logout();
+    res.send(req.user);
 })
 
 router.post('/signup', (req,res) => {
@@ -67,7 +82,6 @@ router.post('/signin', (req,res) => {
         .then(isMatch => {
             if(isMatch) {
                 // return res.json({message: "Login successfully"})
-                // jwt토큰 발급 후 제한시간 10분으로 지정
                 const token = jwt.sign({name: savedUser.name, _id: savedUser._id},JWT_SECRET);
                 // 토큰 10분 제한
                 //const token = jwt.sign({name: savedUser.name, _id: savedUser._id, exp: Math.floor(Date.now() / 1000) + 600},JWT_SECRET);

@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap');
 a {
   color: black !important;
+  padding: 0;
 }
 
 
@@ -10,4 +11,8 @@ a {
 
 .material-icons:hover {
   cursor: pointer;
+}
+
+.collection-item {
+  width: 100%;
 }

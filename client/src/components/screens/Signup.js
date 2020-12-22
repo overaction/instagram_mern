@@ -93,7 +93,7 @@ const SignUp = () => {
                 >
                     SignUp
                 </button>
-                <h5>
+                <h5 className="signup-toggle">
                     <Link to="/signin">Already have an account ?</Link>
                 </h5>
             </div>

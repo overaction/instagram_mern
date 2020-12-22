@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const requireLogin = require('../middleware/requireLogin');
 const Post = mongoose.model("Post");
 
-
 router.get('/allposts',requireLogin,(req,res) => {
     // find all posts
     Post.find()
@@ -14,6 +13,7 @@ router.get('/allposts',requireLogin,(req,res) => {
     .sort('-createdAt')
     .then(posts => {
         res.json({posts})
+        console.log('123');
     })
     .catch(err => {
         console.log(err);

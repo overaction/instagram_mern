@@ -2,14 +2,15 @@ import React, { useContext, useState } from "react";
 import { Link, useHistory } from 'react-router-dom';
 import './Sign.css'
 import M from 'materialize-css';
-
+import GoogleBtn from '../buttons/GoogleBtn';
 import { userContext } from '../../App';
-
+import axios from 'axios';
 const SignIn = () => {
     const {dispatch} = useContext(userContext);
     const history = useHistory();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
     const PostData = async () => {
         if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)) {
             return M.toast({html: "invalid email", classes:"#c62828 red darken-3"})
@@ -43,6 +44,17 @@ const SignIn = () => {
             console.log(err)
         });
     }
+
+    const googleLogin = () => {
+        axios.get('/api/current_user')
+        .then((data) => {
+            console.log(data);
+            localStorage.setItem("jwt",data.data.token);
+            localStorage.setItem("svuser",JSON.stringify(data.data.svuser))
+            dispatch({type:'USER',payload:data.data.svuser});
+        })
+        .catch(() => console.log('google account data not found'));
+    }
     return (
         <div className="mycard">
             <div className="card auth-card">
@@ -58,6 +70,11 @@ const SignIn = () => {
                 <h5 className="signup-toggle">
                     <Link to="/signup">Don't have an account ?</Link>
                 </h5>
+                <a href="/auth/google">
+                    <button className="signup-google" onClick={() => googleLogin()}>
+                        <GoogleBtn/> Google로 로그인하기
+                    </button>
+                </a>
             </div>
         </div>
     );

@@ -30,6 +30,16 @@ h2{
     color: royalblue !important;
 }
 
+.signup-google {
+    color: white;
+    padding: 10px;
+    width: auto;
+    height: 40px;
+    background-color: rgb(209, 68, 43);
+    border: none;
+    cursor: pointer;
+}
+
 #toast-container {
     top: 300px;
     right: 300px !important;

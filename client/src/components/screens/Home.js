@@ -29,6 +29,7 @@ const Home = () => {
         .then(result => {
             console.log(`allposts`)
             console.log(result);
+            // 에러 발생 시엔 로그인 페이지로 이동
             if(result.error) {
                 history.push('/signin')
             }
@@ -39,8 +40,10 @@ const Home = () => {
     },[]);
     // update post
     useEffect(() => {
-        updatePost(clickedPost);
+        if(clickedPost)
+            updatePost(clickedPost);
     },[url])
+
     const updatePost = (postId) => {
         fetch(`/updatepost/${postId}`, {
             method: 'put',
@@ -252,7 +255,8 @@ const Home = () => {
                                             <span className="card-commentby">{comment.commentBy.name}</span>
                                             <ReactHashtag onHashtagClick={(e) => {
                                                 const length = e.length;
-                                                console.log(e.substring(1,length))
+                                                const hashtag = e.substring(1,length);
+                                                console.log(hashtag);
                                             }}>{comment.text}</ReactHashtag>
                                             {comment.commentBy._id === state._id
                                             ?
